@@ -35,7 +35,11 @@ if ( $hmbkp_buwp_installed == false )
 	array_map( 'delete_option', $schedules );
 
 	// Remove all the options
+	/* OBZMOD
 	array_map( 'delete_option', array( 'hmbkp_enable_support', 'hmbkp_plugin_version', 'hmbkp_path', 'hmbkp_default_path', 'hmbkp_upsell', 'hmbkp_notices' ) );
+	*/
+	array_map( 'delete_option', array( 'hmbkp_enable_support', 'obzbrm_plugin_version', 'hmbkp_path', 'hmbkp_default_path', 'hmbkp_upsell', 'hmbkp_notices' ) );
+	/* OBZMOD */
 
 	// Delete all transients
 	array_map( 'delete_transient', array( 'hmbkp_plugin_data', 'hmbkp_directory_filesizes', 'hmbkp_directory_filesize_running', 'timeout_hmbkp_wp_cron_test_beacon', 'hmbkp_wp_cron_test_beacon' ) );

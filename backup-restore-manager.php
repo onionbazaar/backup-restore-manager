@@ -3,7 +3,7 @@
 Plugin Name: Backup & Restore Manager
 Plugin URI: https://wordpress.org/plugins/backup-restore-manager/
 Description: Simple automated Backup and Restore of your WordPress Website.
-Version: 1.0.1
+Version: 1.0.2
 Author: OnionBazaar
 Author URI: https://onionbazaar.org
 License: GNU General Public License v3.0

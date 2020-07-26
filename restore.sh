@@ -11,7 +11,7 @@ if [ -d "$WPDIR/wp-content" ]; then
 	echo "# Plugin Directory: $PLUGINDIR"
 else
 	echo "# ERROR: Wordpress directory not found. Edit this script if you are using a non-default directory structure."
-	return
+	exit
 fi
 
 # detect backup directory
@@ -26,7 +26,6 @@ for BACKUPDIRPATH in $WPDIR/wp-content/*; do
 done
 
 if (( $hits == 0)); then
-
 	for BACKUPDIRPATH in $WPDIR/wp-content/uploads/*; do
 		[ -e "$BACKUPDIRPATH" ] || continue
 		if [[ $BACKUPDIRPATH == *"backupwordpress"* ]]; then
@@ -36,10 +35,9 @@ if (( $hits == 0)); then
 			echo "# Backup Directory: $BACKUPDIR"
 		fi
 	done
-	
 	if (( $hits == 0)); then
 		echo "# ERROR: Backup directory not found. edit this script if you are using a non-default directory structure."
-		return
+		exit
 	fi
 fi
 
@@ -65,11 +63,11 @@ if [ -f "$BACKUPDIR/restore.txt" ]; then
 		echo "# Backup Type: Complete (Database and Files)"
 	else
 		echo "# ERROR: Backuptype not detected. Make sure backup files are not renamed."
-		return
+		exit
 	fi
 else
 	echo "# No Restore Job found."
-	return
+	exit
 fi
 
 #start restore process
@@ -91,7 +89,7 @@ if [ -r "$WPDIR/wp-config.php" ]; then
 	SQLPASSR=$( awk '/DB_PASSWORD/ {print $3}' $WPDIR/wp-config.php )
 	SQLPASS=${SQLPASSR#"'"}
 	SQLPASS=${SQLPASS%"'"}
-	echo "# Current SQL Password: [hidden]"
+	echo "# Current SQL Password: $SQLPASS"
 	
 	if (($BACKUPTYPE < 3)); then
 		WPSITEURL=$(mysql -h$SQLHOST -D$SQLDB -u$SQLUSER -p$SQLPASS -se "SELECT option_value FROM wp_options WHERE option_name = 'siteurl'")
@@ -103,7 +101,7 @@ else
 	#wp-config.php not readable, ask for credentials if not cronmode
 	if [ ! -t 1 ] ; then
 		echo "# Could not retrieve SQL credentials from wp-config.php. Exiting."
-		return
+		exit
 	else
 		if [ -f "$WPDIR/wp-config.php" ]; then
 			echo "#-> wp-config.php not readable. Enter your SQL credentials to restore the database:"
@@ -121,7 +119,7 @@ else
 		WPSITEURL=$(mysql -h$SQLHOST -D$SQLDB -u$SQLUSER -p$SQLPASS -se "SELECT option_value FROM wp_options WHERE option_name = 'siteurl'")
 		if [ -z "$WPSITEURL" ]; then
 			echo "# ERROR: Could not get Website URL from Database, probably incorrect credentials. Try again."
-			return
+			exit
 		else
 			echo "# Current Site URL: $WPSITEURL"
 			WPHOME=$(mysql -h$SQLHOST -D$SQLDB -u$SQLUSER -p$SQLPASS -se "SELECT option_value FROM wp_options WHERE option_name = 'home'")
@@ -162,7 +160,7 @@ if (($BACKUPTYPE == 1)); then
 	#extract backupfile
 	BACKUPDIROLD="$WPDIR/backup-restore-manager-old/wp-content$BACKUPPRE/$(basename $BACKUPDIR)"
 	echo "# extracting $BACKUPFILE to $WPDIR ..."
-	unzip -o -q "$BACKUPDIROLD/$BACKUPFILE" -d "$WPDIR"
+	sudo unzip -X -o -q "$BACKUPDIROLD/$BACKUPFILE" -d "$WPDIR"
 	
 	#move backup directory
 	mv -f $BACKUPDIROLD $BACKUPDIR
@@ -216,9 +214,19 @@ if (($BACKUPTYPE == 1)); then
 	if [ "$WPSITEURL" == "$WPSITEURLBCK" ] && [ "$WPHOME" == "$WPHOMEBCK" ]; then
 		echo "# Site/Home URL unchanged"
 	else
-		echo "# Site/Home URL changed, write them to database ..."
+		if [ "$WPSITEURL" == "$WPHOME" ]; then
+			echo "# Site/Home URL changed, replacing all occurences of $WPSITEURLBCK with $WPSITEURL in the database ..."
+		else
+			echo "# Site/Home URL changed, replacing all occurences of $WPSITEURLBCK with $WPSITEURL and $WPHOMEBCK with $WPHOME in the database ..."
+		fi
 		mysql -h "$SQLHOST" -u "$SQLUSER" -p"$SQLPASS" -e "UPDATE $SQLDB.wp_options SET option_value = '$WPSITEURL' WHERE option_name ='siteurl'"
 		mysql -h "$SQLHOST" -u "$SQLUSER" -p"$SQLPASS" -e "UPDATE $SQLDB.wp_options SET option_value = '$WPHOME' WHERE option_name ='home'"
+		if [ -f "$PLUGINDIR/sar/srdb.cli.php" ]; then
+			php $PLUGINDIR/sar/srdb.cli.php -h "$SQLHOST" -u "$SQLUSER" -p "$SQLPASS" -n "$SQLDB" -s "$WPSITEURLBCK" -r "$WPSITEURL" -v false
+			php $PLUGINDIR/sar/srdb.cli.php -h "$SQLHOST" -u "$SQLUSER" -p "$SQLPASS" -n "$SQLDB" -s "$WPHOMEBCK" -r "$WPHOME" -v false
+		else
+			echo "$PLUGINDIR/sar/srdb.cli.php not found (introduced in version 1.0.2). The restore was successful, but there are most likely still occurences of the old URL in the database."
+		fi
 	fi
 	echo "# Database and File Restore Complete!"
 	echo "$BACKUPFILE" > "$BACKUPDIR/restore_complete.txt"
@@ -228,7 +236,7 @@ elif (($BACKUPTYPE == 2)); then
 
 	#extract backupfile
 	echo "# extracting $BACKUPFILE to $WPDIR ..."
-	unzip -o -q "$BACKUPDIR/$BACKUPFILE" -d "$WPDIR"
+	sudo unzip -X -o -q "$BACKUPDIR/$BACKUPFILE" -d "$WPDIR"
 	
 	for SQLFILENAMEPATH in $WPDIR/database-$SITENAME*.sql; do
 		[ -e "$SQLFILENAMEPATH" ] || continue
@@ -250,9 +258,19 @@ elif (($BACKUPTYPE == 2)); then
 	if [ "$WPSITEURL" == "$WPSITEURLBCK" ] && [ "$WPHOME" == "$WPHOMEBCK" ]; then
 		echo "# Site/Home URL unchanged"
 	else
-		echo "# Site/Home URL changed, write them to database ..."
+		if [ "$WPSITEURL" == "$WPHOME" ]; then
+			echo "# Site/Home URL changed, replacing all occurences of $WPSITEURLBCK with $WPSITEURL in the database ..."
+		else
+			echo "# Site/Home URL changed, replacing all occurences of $WPSITEURLBCK with $WPSITEURL and $WPHOMEBCK with $WPHOME in the database ..."
+		fi
 		mysql -h "$SQLHOST" -u "$SQLUSER" -p"$SQLPASS" -e "UPDATE $SQLDB.wp_options SET option_value = '$WPSITEURL' WHERE option_name ='siteurl'"
 		mysql -h "$SQLHOST" -u "$SQLUSER" -p"$SQLPASS" -e "UPDATE $SQLDB.wp_options SET option_value = '$WPHOME' WHERE option_name ='home'"
+		if [ -f "$PLUGINDIR/sar/srdb.cli.php" ]; then
+			php $PLUGINDIR/sar/srdb.cli.php -h "$SQLHOST" -u "$SQLUSER" -p "$SQLPASS" -n "$SQLDB" -s "$WPSITEURLBCK" -r "$WPSITEURL" -v false
+			php $PLUGINDIR/sar/srdb.cli.php -h "$SQLHOST" -u "$SQLUSER" -p "$SQLPASS" -n "$SQLDB" -s "$WPHOMEBCK" -r "$WPHOME" -v false
+		else
+			echo "$PLUGINDIR/sar/srdb.cli.php not found (introduced in version 1.0.2). The restore was successful, but there are most likely still occurences of the old URL in the database."
+		fi
 	fi
 	echo "# Database Restore Complete!"
 	echo "$BACKUPFILE" > "$BACKUPDIR/restore_complete.txt"
@@ -272,7 +290,7 @@ elif (($BACKUPTYPE == 3)); then
 	#extract backupfile
 	BACKUPDIROLD="$WPDIR/backup-restore-manager-old/wp-content$BACKUPPRE/$(basename $BACKUPDIR)"
 	echo "# extracting $BACKUPFILE to $WPDIR ..."
-	unzip -o -q "$BACKUPDIROLD/$BACKUPFILE" -d "$WPDIR"
+	sudo unzip -X -o -q "$BACKUPDIROLD/$BACKUPFILE" -d "$WPDIR"
 
 	#get sql credentials from backup
 	echo "# reading SQL credentials from backup wp-config.php ..."

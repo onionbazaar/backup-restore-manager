@@ -226,7 +226,7 @@ if ( ( isset( $_POST['hmbkp_manual_restore'] ) ) AND ( file_exists( Path::get_pa
 
 	$hmbkp_restoreinfo = null;
 	if ( strpos( $hmbkp_restore, 'complete' ) ) $hmbkp_restoreinfo = sprintf( esc_html__( '1. Move all files and folders within %s into a temporary subfolder, e.g. %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b>', '<b>' . get_home_path() . 'temp/</b>' ) . '<br>
-	' . sprintf( esc_html__( '2. Extract the backup file into %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b>' ) . '
+	' . sprintf( esc_html__( '2. Extract the backup file into %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b> (use unzip with the -X flag to restore permissions and ownership)' ) . '
 	<br>
 	' . sprintf( esc_html__( '3. Open your SQL Manager (usually phpmyadmin), delete + recreate your database (or create a new one) and import the sql-file from the backup (now located in %s). Delete the sql-file afterwards.', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b>' ) . '<br>
 	' . sprintf( esc_html__( '4. If your SQL database or credentials have changed, update %s accordingly', 'backup-restore-manager' ), '<b>' . get_home_path() . 'wp-config.php</b>' ) . '<br>
@@ -235,7 +235,7 @@ if ( ( isset( $_POST['hmbkp_manual_restore'] ) ) AND ( file_exists( Path::get_pa
 	' . esc_html__( '2. Extract the backup archive and import the sql-file.', 'backup-restore-manager' ) . '<br>
 	' . sprintf( esc_html__( '3. Update %s if your database name has changed.', 'backup-restore-manager' ), '<b>' . get_home_path() . 'wp-config.php</b>' ) . '<br>';
 	elseif ( strpos( $hmbkp_restore, 'file' ) ) $hmbkp_restoreinfo = sprintf( esc_html__( '1. Move all files and folders within %s into a temporary subfolder, e.g. %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b>', '<b>' . get_home_path() . 'temp/</b>' ) . '<br>
-	' . sprintf( esc_html__( '2. Extract the backup file into %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b>' ) . '	<br>
+	' . sprintf( esc_html__( '2. Extract the backup file into %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b> (use unzip with the -X flag to restore permissions and ownership)' ) . '	<br>
 	' . sprintf( esc_html__( '3. If your SQL credentials have changed since the backup, update %s accordingly', 'backup-restore-manager' ), '<b>' . get_home_path() . 'wp-config.php</b>' ) . '<br>
 	' . esc_html__( '4. Delete the temporary subfolder from step 1 if the restore was successful', 'backup-restore-manager' );
 
@@ -287,9 +287,8 @@ if ( file_exists( Path::get_path() . '/restore.txt' ) ) {
 		<div class="hmbkp-schedule-sentence" style="text-align: center;">
 			<b>' . esc_html__( 'Restoring Backup..', 'backup-restore-manager' ) . '</b><br><br>
 			' . $hmbkp_restore_file . '<br><br>
-			<p style="margin: 10px;">' . esc_html__( 'Enter the following commands in the shell/console to restore this backup (Linux only):', 'backup-restore-manager' ) . '</p>
-			<input type="text" style="width: 700px; padding: 3px; text-align: center; border: 1px solid #1d1d1d; background-color: #dcdcdc" value="chmod +x ' . plugin_dir_path(__DIR__) . 'restore.sh"><br>
-			<input type="text" style="width: 700px; margin: 15px; padding: 3px; text-align: center; border: 1px solid #1d1d1d; background-color: #dcdcdc" value=". ' . plugin_dir_path(__DIR__) . 'restore.sh"><br>
+			<p style="margin: 10px;">' . esc_html__( 'Enter the following command into the terminal to restore this backup:', 'backup-restore-manager' ) . '</p>
+			<input type="text" style="width: 700px; margin-bottom: 15px; padding: 3px; text-align: center; border: 1px solid #1d1d1d; background-color: #dcdcdc" value="sudo bash ' . plugin_dir_path(__DIR__) . 'restore.sh"><br>
 			<form method="post" name="hmbkp_restore_confirm" action="' . $hmbkp_phpself . '?page=backup-restore-manager' . $hmbkp_schedule_id_str . '">
 			<input type="hidden" name="hmbkp_restore" value="' . $hmbkp_restore_file . '">
 			<input type="submit" class="button button-primary" name="hmbkp_refresh" value="' . esc_attr__( 'Done', 'backup-restore-manager' ) . '"> &nbsp; <input type="submit" class="button button-primary" name="hmbkp_restore_abort" value="' . esc_attr__( 'Abort', 'backup-restore-manager' ) . '"> &nbsp; <input type="submit" class="button button-primary" name="hmbkp_manual_restore" value="' . esc_attr__( 'Manually restore instead', 'backup-restore-manager' ) . '">

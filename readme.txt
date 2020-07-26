@@ -4,7 +4,7 @@ Donate link: https://onionbazaar.org/?p=donation
 Tags: backup, restore, recover, backupwordpress, backups, clone, database, zip, db, migrate, file backup, archive
 Requires at least: 3.9
 Tested up to: 5.4.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -14,11 +14,11 @@ Simple automated Backup and Restore of your WordPress Website.
 
 Backup & Restore Manager will back up your entire WordPress website including your database and all your files, manually or on a custom schedule.
 
-This is a fork of the popular backup software [BackUpWordPress](https://wordpress.org/plugins/backupwordpress) by HumanMade, which seems to be discontinued unfortunately. We continue maintenance and have extended the plugin with the ability to upload backup files and an automated restore feature.
+Backup & Restore Manager is a fork of the popular backup software [BackUpWordPress](https://wordpress.org/plugins/backupwordpress) by HumanMade, which seems to be discontinued unfortunately. We continue maintenance and have extended the plugin with the ability to upload backup files and an automated restore feature.
 
 If you are already using BackUpWordPress, switching to Backup & Restore Manager will retain all your settings, schedules and backups (and vice versa).
 
-For support, head over to the [Wordpress Support Forum](https://wordpress.org/support/plugin/backup-restore-manager) or [https://onionbazaar.org/?p=help](https://onionbazaar.org/?p=help) for direct support.
+For support, head over to the [WordPress Support Forum](https://wordpress.org/support/plugin/backup-restore-manager) or [https://onionbazaar.org/?p=help](https://onionbazaar.org/?p=help) for direct support.
 
 This plugin requires PHP version 5.3.2 or later
 
@@ -41,7 +41,9 @@ This plugin requires PHP version 5.3.2 or later
 
 The plugin will try to use the `mysqldump` and `zip` commands via shell if they are available, using these will greatly improve the time it takes to back up your site.
 
-Protip: To enable fully automated restores, edit the file `backup-restore-manager-cron` in your backup directory from `no` to `yes` and set up a cronjob to call the script restore.sh every minute (located in the plugin directory).
+Protip: To enable fully automated restores, edit the file `backup-restore-manager-cron` in your backup directory from `no` to `yes` and set up a cronjob to call the script `restore.sh` (located in the plugin directory) every minute (as root), e.g:
+sudo crontab -e
+* * * * * bash /var/www/html/wp-content/plugins/backup-restore-manager/restore.sh
 
 == Frequently Asked Questions ==
 
@@ -101,6 +103,9 @@ If your backups are failing, it's commonly caused by a lack of available resourc
 
 
 == Changelog ==
+
+= 1.0.2 - 2020-07-26 =
+* Improved restore script, Bugfixes
 
 = 1.0.1 - 2020-05-23 =
 * Minor changes restore script cronmode

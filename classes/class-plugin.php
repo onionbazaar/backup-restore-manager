@@ -9,7 +9,7 @@ final class Plugin {
 	/* OBZMOD
 	const PLUGIN_VERSION = '3.6.4';
 	*/
-	const PLUGIN_VERSION = '1.0.1';
+	const PLUGIN_VERSION = '1.0.2';
 	/* OBZMOD */
 	/**
 	 * @var Plugin The singleton instance.
@@ -286,7 +286,7 @@ final class Plugin {
 	public function upgrade() {
 
 		// Fire the update action
-		if ( self::PLUGIN_VERSION != get_option( 'hmbkp_plugin_version' ) ) {
+		if ( self::PLUGIN_VERSION != get_option( 'obzbrm_plugin_version' ) ) {
 			update();
 		}
 

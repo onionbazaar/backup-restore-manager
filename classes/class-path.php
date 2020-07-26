@@ -471,6 +471,13 @@ class CleanUpIterator extends \FilterIterator {
 			return false;
 		}
 
+		/* OBZMOD */
+		// Don't remove the cron settings file
+		if ( 'backup-restore-manager-cron' === $this->current()->getBasename() ) {
+			return false;
+		}
+		/* OBZMOD */
+
 		// Don't cleanup the backup running file
 		return ! preg_match( '/(.*-running)/', $this->current() );
 
