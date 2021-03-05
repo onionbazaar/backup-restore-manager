@@ -3,8 +3,8 @@ Contributors: OnionBazaar
 Donate link: https://onionbazaar.org/?p=donation
 Tags: backup, restore, recover, backupwordpress, backups, clone, database, zip, db, migrate, file backup, archive
 Requires at least: 3.9
-Tested up to: 5.4.1
-Stable tag: 1.0.2
+Tested up to: 5.7
+Stable tag: 1.0.3
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -41,9 +41,9 @@ This plugin requires PHP version 5.3.2 or later
 
 The plugin will try to use the `mysqldump` and `zip` commands via shell if they are available, using these will greatly improve the time it takes to back up your site.
 
-Protip: To enable fully automated restores, edit the file `backup-restore-manager-cron` in your backup directory from `no` to `yes` and set up a cronjob to call the script `restore.sh` (located in the plugin directory) every minute (as root), e.g:
-sudo crontab -e
-* * * * * bash /var/www/html/wp-content/plugins/backup-restore-manager/restore.sh
+Protip: To enable fully automated restores, edit the file `backup-restore-manager-cron` in your backup directory from `no` to `yes` and set up a cronjob to run the script `restore.sh` every minute (as root), e.g:
+sudo nano /etc/crontab
+* * * * * root bash /var/www/html/wp-content/plugins/backup-restore-manager/restore.sh
 
 == Frequently Asked Questions ==
 
@@ -103,6 +103,9 @@ If your backups are failing, it's commonly caused by a lack of available resourc
 
 
 == Changelog ==
+
+= 1.0.3 - 2021-03-05 =
+* Compatibility to WordPress 5.7  
 
 = 1.0.2 - 2020-07-26 =
 * Improved restore script, Bugfixes

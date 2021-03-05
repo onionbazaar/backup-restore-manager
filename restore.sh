@@ -10,7 +10,7 @@ if [ -d "$WPDIR/wp-content" ]; then
 	echo "# Wordpress Directory: $WPDIR"
 	echo "# Plugin Directory: $PLUGINDIR"
 else
-	echo "# ERROR: Wordpress directory not found. Edit this script if you are using a non-default directory structure."
+	echo "# Error: Wordpress directory not found. Edit this script if you are using a non-default directory structure."
 	exit
 fi
 
@@ -36,7 +36,7 @@ if (( $hits == 0)); then
 		fi
 	done
 	if (( $hits == 0)); then
-		echo "# ERROR: Backup directory not found. edit this script if you are using a non-default directory structure."
+		echo "# Error: Backup directory not found. edit this script if you are using a non-default directory structure."
 		exit
 	fi
 fi
@@ -62,7 +62,7 @@ if [ -f "$BACKUPDIR/restore.txt" ]; then
 		BACKUPTYPE=1
 		echo "# Backup Type: Complete (Database and Files)"
 	else
-		echo "# ERROR: Backuptype not detected. Make sure backup files are not renamed."
+		echo "# Error: Backuptype not detected. Make sure backup files are not renamed."
 		exit
 	fi
 else
@@ -118,7 +118,7 @@ else
 		read SQLPASS
 		WPSITEURL=$(mysql -h$SQLHOST -D$SQLDB -u$SQLUSER -p$SQLPASS -se "SELECT option_value FROM wp_options WHERE option_name = 'siteurl'")
 		if [ -z "$WPSITEURL" ]; then
-			echo "# ERROR: Could not get Website URL from Database, probably incorrect credentials. Try again."
+			echo "# Error: Could not get Website URL from Database, probably incorrect credentials. Try again."
 			exit
 		else
 			echo "# Current Site URL: $WPSITEURL"
@@ -128,19 +128,23 @@ else
 	fi
 fi
 
-#delete restore job file
-rm -f "$BACKUPDIR/restore.txt"
-
 #install unzip
 if [ ! -n "$(command -v unzip)" ]; then
-		if [ -n "$(command -v yum)" ]; then
-			PMGR="yum"
-		else
-			PMGR="apt-get"
-		fi
-		echo "# installing unzip ..."
-		$PMGR -y install unzip
+	if [ -n "$(command -v yum)" ]; then
+		PMGR="yum"
+	else
+		PMGR="apt-get"
+	fi
+	echo "# installing unzip ..."
+	$PMGR -y install unzip
+	if [ ! -n "$(command -v unzip)" ]; then
+		echo "# Error: could not install unzip. Try again."
+		exit
+	fi
 fi
+
+#delete restore job file
+rm -f "$BACKUPDIR/restore.txt"
 
 echo "# restoring Backup $BACKUPFILE ..."
 SITENAME=${BACKUPFILE::-44}

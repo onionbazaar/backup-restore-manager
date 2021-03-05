@@ -3,7 +3,7 @@
 Plugin Name: Backup & Restore Manager
 Plugin URI: https://wordpress.org/plugins/backup-restore-manager/
 Description: Simple automated Backup and Restore of your WordPress Website.
-Version: 1.0.2
+Version: 1.0.3
 Author: OnionBazaar
 Author URI: https://onionbazaar.org
 License: GNU General Public License v3.0
@@ -30,7 +30,7 @@ register_activation_hook( __FILE__, array( 'HMBKP_Setup', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'HMBKP_Setup', 'deactivate' ) );
 
 function get_buwp_notice_message() {
-	echo '<div class="error"><p>'.esc_html__( 'BackUpWordPress is activated -> deactivating Backup & Restore Manager', 'backup-restore-manager' ).'</p></div>';
+	echo '<div class="notice notice-error is-dismissible"><p><b>'.esc_html__( 'BackUpWordPress is activated -> deactivating Backup & Restore Manager', 'backup-restore-manager' ).'</b></p></div>';
 }
 
 function check_backupwordpress_active() {

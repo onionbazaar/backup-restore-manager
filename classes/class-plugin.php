@@ -9,7 +9,7 @@ final class Plugin {
 	/* OBZMOD
 	const PLUGIN_VERSION = '3.6.4';
 	*/
-	const PLUGIN_VERSION = '1.0.2';
+	const PLUGIN_VERSION = '1.0.3';
 	/* OBZMOD */
 	/**
 	 * @var Plugin The singleton instance.

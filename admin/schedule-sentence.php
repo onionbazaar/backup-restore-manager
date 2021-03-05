@@ -229,14 +229,14 @@ if ( ( isset( $_POST['hmbkp_manual_restore'] ) ) AND ( file_exists( Path::get_pa
 	' . sprintf( esc_html__( '2. Extract the backup file into %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b> (use unzip with the -X flag to restore permissions and ownership)' ) . '
 	<br>
 	' . sprintf( esc_html__( '3. Open your SQL Manager (usually phpmyadmin), delete + recreate your database (or create a new one) and import the sql-file from the backup (now located in %s). Delete the sql-file afterwards.', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b>' ) . '<br>
-	' . sprintf( esc_html__( '4. If your SQL database or credentials have changed, update %s accordingly', 'backup-restore-manager' ), '<b>' . get_home_path() . 'wp-config.php</b>' ) . '<br>
+	' . sprintf( esc_html__( '4. If your SQL database or credentials have changed, update %s accordingly.', 'backup-restore-manager' ), '<b>' . get_home_path() . 'wp-config.php</b>' ) . '<br>
 	' . esc_html__( '5. Delete the temporary subfolder from step 1 if the restore was successful', 'backup-restore-manager' );
 	elseif ( strpos( $hmbkp_restore, 'database' ) ) $hmbkp_restoreinfo = esc_html__( '1. Open your SQL Manager (usually phpmyadmin) and delete + recreate your database (or create a new one)', 'backup-restore-manager' ) . '<br>
 	' . esc_html__( '2. Extract the backup archive and import the sql-file.', 'backup-restore-manager' ) . '<br>
 	' . sprintf( esc_html__( '3. Update %s if your database name has changed.', 'backup-restore-manager' ), '<b>' . get_home_path() . 'wp-config.php</b>' ) . '<br>';
 	elseif ( strpos( $hmbkp_restore, 'file' ) ) $hmbkp_restoreinfo = sprintf( esc_html__( '1. Move all files and folders within %s into a temporary subfolder, e.g. %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b>', '<b>' . get_home_path() . 'temp/</b>' ) . '<br>
 	' . sprintf( esc_html__( '2. Extract the backup file into %s', 'backup-restore-manager' ), '<b>' . get_home_path() . '</b> (use unzip with the -X flag to restore permissions and ownership)' ) . '	<br>
-	' . sprintf( esc_html__( '3. If your SQL credentials have changed since the backup, update %s accordingly', 'backup-restore-manager' ), '<b>' . get_home_path() . 'wp-config.php</b>' ) . '<br>
+	' . sprintf( esc_html__( '3. If your SQL credentials have changed since the backup, update %s accordingly.', 'backup-restore-manager' ), '<b>' . get_home_path() . 'wp-config.php</b>' ) . '<br>
 	' . esc_html__( '4. Delete the temporary subfolder from step 1 if the restore was successful', 'backup-restore-manager' );
 
 	echo '
